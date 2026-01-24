@@ -1,73 +1,63 @@
-# React + TypeScript + Vite
+# Week Schedule
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação de agendamento semanal com interface drag and drop para organização de horários de cursos.
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Visualização de grade semanal com slots de 30 minutos
+- Templates de cursos com durações configuráveis
+- Drag and drop para adicionar eventos na grade
+- Movimentação de eventos entre dias e horários
+- Remoção de eventos arrastando para a sidebar
+- Validação de colisões entre eventos
+- Preview visual durante o arraste
 
-## React Compiler
+## Tecnologias
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- TypeScript
+- Vite (Rolldown)
+- Tailwind CSS 4
+- Zustand (gerenciamento de estado)
 
-## Expanding the ESLint configuration
+## Instalação
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+bun install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Desenvolvimento
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+bun run dev
 ```
+
+## Build
+
+```bash
+bun run build
+```
+
+## Estrutura
+
+```
+src/
+├── components/
+│   └── WeekView/
+│       ├── constants.ts      # Constantes, tipos e utilitários
+│       ├── store.ts          # Estado global (Zustand)
+│       ├── WeekView.tsx      # Componente principal
+│       ├── WeekHeader.tsx    # Cabeçalho com dias da semana
+│       ├── TimeColumn.tsx    # Coluna de horários
+│       ├── DayColumn.tsx     # Coluna de cada dia
+│       ├── TemplatesSidebar.tsx  # Sidebar com templates
+│       ├── TemplateCard.tsx  # Card de template draggable
+│       └── ScheduledEventCard.tsx  # Evento agendado
+├── App.tsx
+├── main.tsx
+└── index.css
+```
+
+## Licença
+
+MIT
