@@ -10,10 +10,9 @@ import { useScheduleStore } from './store'
 
 interface ScheduledEventCardProps {
   event: ScheduledEvent
-  onRemove: (eventId: string) => void
 }
 
-export function ScheduledEventCard({ event, onRemove }: ScheduledEventCardProps) {
+export function ScheduledEventCard({ event }: ScheduledEventCardProps) {
   const setDragging = useScheduleStore((s) => s.setDragging)
   const slotsOccupied = durationToSlots(event.duration)
 
@@ -62,8 +61,7 @@ export function ScheduledEventCard({ event, onRemove }: ScheduledEventCardProps)
         top: 0,
         height: slotsToHeight(slotsOccupied),
       }}
-      onClick={() => onRemove(event.id)}
-      title="Arraste para mover ou clique para remover"
+      title="Arraste para mover ou solte nos templates para remover"
     >
       <div className="font-medium text-xs truncate">{event.templateName}</div>
       <div className="text-xs opacity-80">{formatDuration(event.duration)}</div>

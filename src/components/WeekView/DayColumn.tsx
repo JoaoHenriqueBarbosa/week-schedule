@@ -39,7 +39,6 @@ export function DayColumn({ dayIndex, isLast }: DayColumnProps) {
   const clearDropPreview = useScheduleStore((s) => s.clearDropPreview)
   const addEvent = useScheduleStore((s) => s.addEvent)
   const moveEvent = useScheduleStore((s) => s.moveEvent)
-  const removeEvent = useScheduleStore((s) => s.removeEvent)
 
   const events = useMemo(
     () => allEvents.filter((e) => e.dayIndex === dayIndex),
@@ -99,7 +98,7 @@ export function DayColumn({ dayIndex, isLast }: DayColumnProps) {
             onDrop={(e) => handleDrop(e, i)}
           >
             {slotData?.isStart && (
-              <ScheduledEventCard event={slotData.event} onRemove={removeEvent} />
+              <ScheduledEventCard event={slotData.event} />
             )}
             {isPreviewStart && dropPreview && (
               <div
