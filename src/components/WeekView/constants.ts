@@ -57,3 +57,40 @@ export function formatDuration(minutes: number): string {
   if (mins === 0) return `${hours}h`
   return `${hours}h${mins}`
 }
+
+// ========== DRAG AND DROP ==========
+
+export const DRAG_DATA_TYPE = 'application/schedule-template'
+
+export interface DragData {
+  templateId: number
+  templateName: string
+  duration: number
+}
+
+export interface ScheduledEvent {
+  id: string
+  templateId: number
+  templateName: string
+  dayIndex: number
+  startSlotIndex: number
+  duration: number
+}
+
+export const durationToSlots = (minutes: number): number => {
+  const slotDuration = 60 / SLOTS_PER_HOUR
+  return Math.ceil(minutes / slotDuration)
+}
+
+export const generateEventId = (): string =>
+  `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+
+export const serializeDragData = (data: DragData): string => JSON.stringify(data)
+
+export const parseDragData = (data: string): DragData | null => {
+  try {
+    return JSON.parse(data) as DragData
+  } catch {
+    return null
+  }
+}
