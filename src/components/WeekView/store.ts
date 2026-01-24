@@ -26,7 +26,6 @@ interface ScheduleState {
   addEvent: (dayIndex: number, startSlotIndex: number, data: DragData) => boolean
   removeEvent: (eventId: string) => void
   checkCollision: (dayIndex: number, startSlotIndex: number, slotsRequired: number) => boolean
-  getEventsForDay: (dayIndex: number) => ScheduledEvent[]
 }
 
 export const useScheduleStore = create<ScheduleState>((set, get) => ({
@@ -85,9 +84,5 @@ export const useScheduleStore = create<ScheduleState>((set, get) => ({
       const eventEndSlot = event.startSlotIndex + durationToSlots(event.duration) - 1
       return !(endSlotIndex < event.startSlotIndex || startSlotIndex > eventEndSlot)
     })
-  },
-
-  getEventsForDay: (dayIndex) => {
-    return get().events.filter((e) => e.dayIndex === dayIndex)
   },
 }))

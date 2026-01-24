@@ -1,11 +1,13 @@
-import { useShallow } from 'zustand/react/shallow'
+import { useMemo } from 'react'
 import {
   TIME_SLOTS,
   getBorderRight,
   getSlotBottomBorder,
   durationToSlots,
+  slotsToHeight,
   DRAG_DATA_TYPE,
   parseDragData,
+  type ScheduledEvent,
 } from './constants'
 import { useScheduleStore } from './store'
 import { ScheduledEventCard } from './ScheduledEventCard'
@@ -15,24 +17,32 @@ interface DayColumnProps {
   isLast: boolean
 }
 
+function buildEventsBySlot(events: ScheduledEvent[]) {
+  const map = new Map<number, { event: ScheduledEvent; isStart: boolean }>()
+  for (const event of events) {
+    const slots = durationToSlots(event.duration)
+    for (let i = 0; i < slots; i++) {
+      map.set(event.startSlotIndex + i, { event, isStart: i === 0 })
+    }
+  }
+  return map
+}
+
 export function DayColumn({ dayIndex, isLast }: DayColumnProps) {
-  const events = useScheduleStore(useShallow((s) => s.events.filter((e) => e.dayIndex === dayIndex)))
+  const allEvents = useScheduleStore((s) => s.events)
   const dropPreview = useScheduleStore((s) => s.dropPreview)
   const setDropPreview = useScheduleStore((s) => s.setDropPreview)
   const clearDropPreview = useScheduleStore((s) => s.clearDropPreview)
   const addEvent = useScheduleStore((s) => s.addEvent)
   const removeEvent = useScheduleStore((s) => s.removeEvent)
 
-  const eventsBySlot = new Map<number, { event: typeof events[0]; isStart: boolean }>()
-  events.forEach((event) => {
-    const slots = durationToSlots(event.duration)
-    for (let i = 0; i < slots; i++) {
-      eventsBySlot.set(event.startSlotIndex + i, {
-        event,
-        isStart: i === 0,
-      })
-    }
-  })
+  const events = useMemo(
+    () => allEvents.filter((e) => e.dayIndex === dayIndex),
+    [allEvents, dayIndex]
+  )
+
+  const eventsBySlot = buildEventsBySlot(events)
+  const isPreviewForThisDay = dropPreview?.dayIndex === dayIndex
 
   const handleDragOver = (e: React.DragEvent) => {
     if (!e.dataTransfer.types.includes(DRAG_DATA_TYPE)) return
@@ -62,8 +72,6 @@ export function DayColumn({ dayIndex, isLast }: DayColumnProps) {
     addEvent(dayIndex, slotIndex, data)
   }
 
-  const isPreviewForThisDay = dropPreview?.dayIndex === dayIndex
-
   return (
     <div
       className={`flex-1 flex flex-col ${getBorderRight(isLast)}`}
@@ -87,10 +95,7 @@ export function DayColumn({ dayIndex, isLast }: DayColumnProps) {
             {isPreviewStart && dropPreview && (
               <div
                 className={`absolute inset-x-0 z-5 rounded-sm pointer-events-none ${dropPreview.isValid ? 'bg-primary/30' : 'bg-destructive/30'}`}
-                style={{
-                  top: 0,
-                  height: `calc(${dropPreview.slotsCount} * 100% - 1px)`,
-                }}
+                style={{ top: 0, height: slotsToHeight(dropPreview.slotsCount) }}
               />
             )}
           </div>

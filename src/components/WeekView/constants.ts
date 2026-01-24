@@ -82,6 +82,9 @@ export const durationToSlots = (minutes: number): number => {
   return Math.ceil(minutes / slotDuration)
 }
 
+export const slotsToHeight = (slotsCount: number): string =>
+  `calc(${slotsCount} * 100% - 1px)`
+
 export const generateEventId = (): string =>
   `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
