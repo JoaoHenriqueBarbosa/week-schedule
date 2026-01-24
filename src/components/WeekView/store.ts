@@ -24,8 +24,9 @@ interface ScheduleState {
   clearDropPreview: () => void
 
   addEvent: (dayIndex: number, startSlotIndex: number, data: DragData) => boolean
+  moveEvent: (eventId: string, dayIndex: number, startSlotIndex: number) => boolean
   removeEvent: (eventId: string) => void
-  checkCollision: (dayIndex: number, startSlotIndex: number, slotsRequired: number) => boolean
+  checkCollision: (dayIndex: number, startSlotIndex: number, slotsRequired: number, excludeEventId?: string) => boolean
 }
 
 export const useScheduleStore = create<ScheduleState>((set, get) => ({
@@ -42,7 +43,7 @@ export const useScheduleStore = create<ScheduleState>((set, get) => ({
       return
     }
     const slotsCount = durationToSlots(dragging.duration)
-    const isValid = !checkCollision(dayIndex, startSlot, slotsCount)
+    const isValid = !checkCollision(dayIndex, startSlot, slotsCount, dragging.eventId)
     set({ dropPreview: { dayIndex, startSlot, slotsCount, isValid } })
   },
 
@@ -69,17 +70,36 @@ export const useScheduleStore = create<ScheduleState>((set, get) => ({
     return true
   },
 
+  moveEvent: (eventId, dayIndex, startSlotIndex) => {
+    const { events, checkCollision } = get()
+    const event = events.find((e) => e.id === eventId)
+    if (!event) return false
+
+    const slotsRequired = durationToSlots(event.duration)
+    if (checkCollision(dayIndex, startSlotIndex, slotsRequired, eventId)) {
+      return false
+    }
+
+    set((state) => ({
+      events: state.events.map((e) =>
+        e.id === eventId ? { ...e, dayIndex, startSlotIndex } : e
+      ),
+    }))
+    return true
+  },
+
   removeEvent: (eventId) => {
     set((state) => ({ events: state.events.filter((e) => e.id !== eventId) }))
   },
 
-  checkCollision: (dayIndex, startSlotIndex, slotsRequired) => {
+  checkCollision: (dayIndex, startSlotIndex, slotsRequired, excludeEventId) => {
     const { events } = get()
     const endSlotIndex = startSlotIndex + slotsRequired - 1
 
     if (endSlotIndex >= TOTAL_SLOTS) return true
 
     return events.some((event) => {
+      if (excludeEventId && event.id === excludeEventId) return false
       if (event.dayIndex !== dayIndex) return false
       const eventEndSlot = event.startSlotIndex + durationToSlots(event.duration) - 1
       return !(endSlotIndex < event.startSlotIndex || startSlotIndex > eventEndSlot)

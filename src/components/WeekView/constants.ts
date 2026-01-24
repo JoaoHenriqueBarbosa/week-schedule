@@ -66,6 +66,7 @@ export interface DragData {
   templateId: number
   templateName: string
   duration: number
+  eventId?: string
 }
 
 export interface ScheduledEvent {

@@ -36,7 +36,7 @@ export function TemplateCard({ template }: TemplateCardProps) {
     requestAnimationFrame(() => document.body.removeChild(clone))
 
     e.dataTransfer.setData(DRAG_DATA_TYPE, serializeDragData(data))
-    e.dataTransfer.effectAllowed = 'copy'
+    e.dataTransfer.effectAllowed = 'copyMove'
     setDragging(data)
   }
 

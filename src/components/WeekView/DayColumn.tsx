@@ -28,12 +28,17 @@ function buildEventsBySlot(events: ScheduledEvent[]) {
   return map
 }
 
+function hasValidDragType(e: React.DragEvent): boolean {
+  return Array.from(e.dataTransfer.types).includes(DRAG_DATA_TYPE)
+}
+
 export function DayColumn({ dayIndex, isLast }: DayColumnProps) {
   const allEvents = useScheduleStore((s) => s.events)
   const dropPreview = useScheduleStore((s) => s.dropPreview)
   const setDropPreview = useScheduleStore((s) => s.setDropPreview)
   const clearDropPreview = useScheduleStore((s) => s.clearDropPreview)
   const addEvent = useScheduleStore((s) => s.addEvent)
+  const moveEvent = useScheduleStore((s) => s.moveEvent)
   const removeEvent = useScheduleStore((s) => s.removeEvent)
 
   const events = useMemo(
@@ -45,13 +50,13 @@ export function DayColumn({ dayIndex, isLast }: DayColumnProps) {
   const isPreviewForThisDay = dropPreview?.dayIndex === dayIndex
 
   const handleDragOver = (e: React.DragEvent) => {
-    if (!e.dataTransfer.types.includes(DRAG_DATA_TYPE)) return
+    if (!hasValidDragType(e)) return
     e.preventDefault()
-    e.dataTransfer.dropEffect = 'copy'
+    e.dataTransfer.dropEffect = 'move'
   }
 
   const handleDragEnter = (e: React.DragEvent, slotIndex: number) => {
-    if (!e.dataTransfer.types.includes(DRAG_DATA_TYPE)) return
+    if (!hasValidDragType(e)) return
     e.preventDefault()
     setDropPreview(dayIndex, slotIndex)
   }
@@ -69,7 +74,11 @@ export function DayColumn({ dayIndex, isLast }: DayColumnProps) {
     const data = parseDragData(raw)
     if (!data) return
 
-    addEvent(dayIndex, slotIndex, data)
+    if (data.eventId) {
+      moveEvent(data.eventId, dayIndex, slotIndex)
+    } else {
+      addEvent(dayIndex, slotIndex, data)
+    }
   }
 
   return (
