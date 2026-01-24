@@ -10,7 +10,7 @@ export function ScheduledEventCard({ event, onRemove }: ScheduledEventCardProps)
 
   return (
     <div
-      className="absolute inset-x-0 z-10 bg-primary text-primary-foreground rounded-sm p-1 overflow-hidden cursor-pointer hover:bg-primary/90 transition-colors border-2 border-white"
+      className="absolute inset-x-0 z-10 bg-primary text-primary-foreground rounded-sm p-1 overflow-hidden cursor-pointer hover:bg-primary/90 border-2 border-white"
       style={{
         top: 0,
         height: `calc(${slotsOccupied} * 100% - 1px)`,
